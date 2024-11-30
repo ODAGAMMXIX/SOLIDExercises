@@ -1,4 +1,7 @@
 //D - Dependency Inversion Principle (DIP)
+
+// PARA CRIAR SW FLEXÍVEL, DEVEMOS DEPENDER DE ABSTRAÇÕES, NÃO DE IMPLEMENTAÇÕES CONCRETAS.
+
 //High-level modules should not depend on low-level modules. 
 //Both should depend on abstractions (e.g., interfaces).
 
@@ -9,6 +12,24 @@
 //Let's create an example with an Engine interface,
 //different types of engines,
 //and a Car class that implements the Engine interface and a method accelerate.
+            +-------------+
+            |   Engine    |  <----- Interface (Abstraction)
+            +-------------+
+                   ^
+                   |
+   +---------------+-----------------+
+   |               |                 |
++-------------+ +-------------+ +-------------+
+|PetrolEngine | |DieselEngine | |ElectricEngine|
+|   (implements)  | (implements)  | (implements)  |
++-------------+ +-------------+ +-------------+
+                   ^
+                   |
+             +-------------+
+             |    Car      |  <----- High-level class (depends on Engine interface)
+             +-------------+
+
+                
 interface Engine { //Define the Engine Interface
     void start();
 }
@@ -33,7 +54,7 @@ class ElectricEngine implements Engine {                //Eletric
         System.out.println("Electric engine started.");
     }
 }
-//Create the Car Class that Depends on Engine Interface
+//Create the Car class that Depends on Engine Interface
 class Car {
     private Engine engine;
 
@@ -64,3 +85,76 @@ public class Main {
     }
 }
 
+// VIOLATION E.G.
+
+    +--------------+    +--------------+    +---------------+
+    |PetrolEngine  |    |DieselEngine  |    |ElectricEngine |
+    +--------------+    +--------------+    +---------------+
+           ^                   ^                     ^
+           |                   |                     |
+           +-------------------+---------------------+
+                               |
+                         +-------------+
+                         |     Car     |  <---- High-level class (directly depends on concrete engine implementations)
+                         +-------------+
+// PetrolEngine class
+class PetrolEngine {
+    public void start() {
+        System.out.println("Petrol engine started.");
+    }
+}
+
+// DieselEngine class
+class DieselEngine {
+    public void start() {
+        System.out.println("Diesel engine started.");
+    }
+}
+
+// ElectricEngine class
+class ElectricEngine {
+    public void start() {
+        System.out.println("Electric engine started.");
+    }
+}
+
+// Car class directly depending on concrete engine types
+class Car {
+    private PetrolEngine petrolEngine;
+    private DieselEngine dieselEngine;
+    private ElectricEngine electricEngine;
+
+    public Car(PetrolEngine petrolEngine, DieselEngine dieselEngine, ElectricEngine electricEngine) {
+        this.petrolEngine = petrolEngine;
+        this.dieselEngine = dieselEngine;
+        this.electricEngine = electricEngine;
+    }
+
+    public void accelerateWithPetrolEngine() {
+        petrolEngine.start();
+        System.out.println("Car is accelerating with petrol engine.");
+    }
+
+    public void accelerateWithDieselEngine() {
+        dieselEngine.start();
+        System.out.println("Car is accelerating with diesel engine.");
+    }
+
+    public void accelerateWithElectricEngine() {
+        electricEngine.start();
+        System.out.println("Car is accelerating with electric engine.");
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        PetrolEngine petrolEngine = new PetrolEngine();
+        DieselEngine dieselEngine = new DieselEngine();
+        ElectricEngine electricEngine = new ElectricEngine();
+
+        Car car = new Car(petrolEngine, dieselEngine, electricEngine);
+
+        car.accelerateWithPetrolEngine();  // Output: Petrol engine started. Car is accelerating with petrol engine.
+        car.accelerateWithDieselEngine();  // Output: Diesel engine started. Car is accelerating with diesel engine.
+        car.accelerateWithElectricEngine();  // Output: Electric engine started. Car is accelerating with electric engine.
+    }
+}
