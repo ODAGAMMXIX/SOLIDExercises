@@ -1,0 +1,2 @@
+# SOLIDExercises
+Studying SOLID Principles
